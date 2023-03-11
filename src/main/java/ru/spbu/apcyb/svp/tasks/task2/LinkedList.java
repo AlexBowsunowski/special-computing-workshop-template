@@ -69,14 +69,14 @@ public class LinkedList implements java.util.List<Object> {
   }
 
   @Override
-  public <T> T[] toArray(T[] a) throws UnsupportedOperationException {
+  public <T> T[] toArray(T[] a) {
     throw new UnsupportedOperationException();
   }
 
   @Override
   public boolean add(Object o) {
     Node it = this.head;
-    if (this.head == null) {
+    if (it == null) {
       this.head = new Node(o, null, null);
 
 
