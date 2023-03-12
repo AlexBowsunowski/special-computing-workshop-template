@@ -1,0 +1,7 @@
+src\test\java\ru\spbu\apcyb\svp\tasks\ArrayUtilsTest.java
+src\test\java\ru\spbu\apcyb\svp\tasks\Task1Test.java
+src\test\java\ru\spbu\apcyb\svp\tasks\Task2Test.java
+src\test\java\ru\spbu\apcyb\svp\tasks\Task3Test.java
+src\test\java\ru\spbu\apcyb\svp\tasks\Task4Test.java
+src\test\java\ru\spbu\apcyb\svp\tasks\Task5Test.java
+src\test\resources\.stub

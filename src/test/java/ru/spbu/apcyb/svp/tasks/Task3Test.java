@@ -3,10 +3,14 @@ package ru.spbu.apcyb.svp.tasks;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -21,8 +25,7 @@ class Task3Test {
   void outFileErrorTest() {
     String rootTest = "src/test";
     Task3 testclass = new Task3();
-    Assertions.assertThrows(IOException.class,
-        () -> testclass.main(new String[]{rootTest, "src"}));
+    Assertions.assertThrows(IOException.class, () -> testclass.main(new String[]{rootTest, "src"}));
 
 
   }
@@ -34,17 +37,9 @@ class Task3Test {
     String outputTest = "output.txt";
     List<String> actual = new ArrayList<>();
     Task3 testclass = new Task3();
-
-    List<String> expected = new ArrayList(Arrays.asList(new String[]{
-        "src/test/java/ru/spbu/apcyb/svp/tasks/Task1Test.java",
-        "src/test/java/ru/spbu/apcyb/svp/tasks/Task5Test.java",
-        "src/test/java/ru/spbu/apcyb/svp/tasks/LinkedListTest.java",
-        "src/test/java/ru/spbu/apcyb/svp/tasks/ArrayUtilsTest.java",
-        "src/test/java/ru/spbu/apcyb/svp/tasks/QueueJrTest.java",
-        "src/test/java/ru/spbu/apcyb/svp/tasks/Task3Test.java",
-        "src/test/java/ru/spbu/apcyb/svp/tasks/Task2Test.java",
-        "src/test/resources/.stub",
-    }));
+    String test_path = "src/test/";
+    List<String> expected = Files.walk(Paths.get(test_path)).filter(Files::isRegularFile)
+        .map(Path::toString).collect(Collectors.toList());
 
     testclass.main(new String[]{rootTest, outputTest});
 
