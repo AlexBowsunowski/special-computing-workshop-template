@@ -50,7 +50,7 @@ public class Task5 {
   protected void mainLogic(String inDir, String outDir, String prefix) throws IOException {
     HashMap<String, Integer> hashMap = readFile(inDir);
     writeToFile(hashMap, outDir);
-    hashMap.forEach((key, value) -> CompletableFuture.runAsync(new MyTask(value, key, prefix))
+    hashMap.forEach((key, value) -> CompletableFuture.runAsync(new WriteWord(value, key, prefix))
     );
   }
 

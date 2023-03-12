@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 /**
  * класс для создания и записи в CompletableFuture.
  */
-public class MyTask implements Runnable {
+public class WriteWord implements Runnable {
 
   private final String word;
   private final Integer num;
@@ -22,7 +22,7 @@ public class MyTask implements Runnable {
    * @param word   слово, для которого создается файл.
    * @param prefix путь до дериктории в которой будут создаваться файлы со словами.
    */
-  public MyTask(Integer num, String word, String prefix) {
+  public WriteWord(Integer num, String word, String prefix) {
     this.num = num;
     this.word = word;
     this.prefix = prefix + "/";
@@ -32,7 +32,7 @@ public class MyTask implements Runnable {
   @Override
   public void run() {
     File out = new File(prefix + this.word);
-    Logger logger = Logger.getLogger(MyTask.class.getName());
+    Logger logger = Logger.getLogger(WriteWord.class.getName());
 
     if (!word.isEmpty() && !word.equals(" ")) {
       try (FileWriter fileWriter = new FileWriter(out)) {
