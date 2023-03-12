@@ -62,19 +62,12 @@ public class Task1 {
    * Перенаправление логирования в файл для тестирования.
    */
   protected void loggerConfiguration() throws FileNotFoundException {
-    try {
-      OutputStream fileOutputStream = new FileOutputStream("output.log");
-      PrintStream outputStream = new PrintStream(fileOutputStream);
-      MyFormatter simpleFormatter = new MyFormatter();
-      StreamHandler streamHandler = new StreamHandler(outputStream, simpleFormatter);
 
-      this.logger.setUseParentHandlers(false);
-      this.logger.addHandler(streamHandler);
+    OutputStream fileOutputStream = new FileOutputStream("output.log");
+    PrintStream outputStream = new PrintStream(fileOutputStream);
+    StreamHandler streamHandler = new StreamHandler(outputStream);
 
-    } catch (FileNotFoundException e) {
-      throw new FileNotFoundException("logfile not found");
-    }
-
+    this.logger.setUseParentHandlers(false);
 
   }
 
@@ -126,11 +119,10 @@ public class Task1 {
 
     }
 
-    Object[] tmpArray = tmpValues.toArray();
+    Long[] tmpArray = tmpValues.toArray(Long[]::new);
     this.values = new long[tmpArray.length];
     for (int j = 0; j < tmpArray.length; j++) {
-      this.values[j] = Long.parseLong(tmpArray[j].toString());
-    }
+      this.values[j] = tmpArray[j];
 
     if (this.values.length == 0) {
       throw new ArithmeticException("invalid values");
@@ -149,8 +141,7 @@ public class Task1 {
     logger.log(java.util.logging.Level.INFO, out);
   }
 
-  protected List<List<Long>> setNumOfCombinations(long currentSum, int maxIndex,
-      long[] values) {
+  protected List<List<Long>> setNumOfCombinations(long currentSum, int maxIndex, long[] values) {
     List<List<Long>> result = new ArrayList<>();
     if (currentSum == 0) {
       result.add(new ArrayList<>());
@@ -161,8 +152,7 @@ public class Task1 {
           continue;
         }
 
-        for (List<Long> remain : setNumOfCombinations(currentSum - currentValue, i,
-            values)) {
+        for (List<Long> remain : setNumOfCombinations(currentSum - currentValue, i, values)) {
           List<Long> currentCombination = new ArrayList<>();
           currentCombination.add(currentValue);
           currentCombination.addAll(remain);
@@ -189,8 +179,7 @@ public class Task1 {
           continue;
         }
 
-        for (List<Long> remain : getCombinations(currentSum - currentValue, i,
-            values)) {
+        for (List<Long> remain : getCombinations(currentSum - currentValue, i, values)) {
           List<Long> currentCombination = new ArrayList<>();
           currentCombination.add(currentValue);
           currentCombination.addAll(remain);
