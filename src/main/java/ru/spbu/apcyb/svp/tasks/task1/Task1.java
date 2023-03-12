@@ -62,13 +62,10 @@ public class Task1 {
    * Перенаправление логирования в файл для тестирования.
    */
   protected void loggerConfiguration() throws FileNotFoundException {
-
-    OutputStream fileOutputStream = new FileOutputStream("output.log");
-    PrintStream outputStream = new PrintStream(fileOutputStream);
-    StreamHandler streamHandler = new StreamHandler(outputStream);
-
-    this.logger.setUseParentHandlers(false);
-
+    File logging = new File("logging.properties");
+    if (logging.exists() && !System.getProperties().hasKey("java.util.logging.config.file")) {
+      System.setProperty("java.util.logging.config.file", path);
+    }
   }
 
 
@@ -124,102 +121,100 @@ public class Task1 {
     for (int j = 0; j < tmpArray.length; j++) {
       this.values[j] = tmpArray[j];
 
-    if (this.values.length == 0) {
-      throw new ArithmeticException("invalid values");
+      if (this.values.length == 0) {
+        throw new ArithmeticException("invalid values");
+      }
     }
-  }
 
+    protected void printCombination (Logger logger, List < Long > combination){
 
-  protected void printCombination(java.util.logging.Logger logger, List<Long> combination) {
+      String out = combination.toString();
+      logger.log(java.util.logging.Level.INFO, out);
+    }
 
-    String out = combination.toString();
-    logger.log(java.util.logging.Level.INFO, out);
-  }
+    protected void printNumber (Logger logger,long ans){
+      String out = Long.toString(ans);
+      logger.log(java.util.logging.Level.INFO, out);
+    }
 
-  protected void printNumber(java.util.logging.Logger logger, long ans) {
-    String out = Long.toString(ans);
-    logger.log(java.util.logging.Level.INFO, out);
-  }
+    protected List<List<Long>> setNumOfCombinations ( long currentSum, int maxIndex, long[] values){
+      List<List<Long>> result = new ArrayList<>();
+      if (currentSum == 0) {
+        result.add(new ArrayList<>());
+      } else {
+        for (int i = maxIndex; i >= 0; i--) {
+          long currentValue = values[i];
+          if (currentValue > currentSum) {
+            continue;
+          }
 
-  protected List<List<Long>> setNumOfCombinations(long currentSum, int maxIndex, long[] values) {
-    List<List<Long>> result = new ArrayList<>();
-    if (currentSum == 0) {
-      result.add(new ArrayList<>());
-    } else {
-      for (int i = maxIndex; i >= 0; i--) {
-        long currentValue = values[i];
-        if (currentValue > currentSum) {
-          continue;
-        }
+          for (List<Long> remain : setNumOfCombinations(currentSum - currentValue, i, values)) {
+            List<Long> currentCombination = new ArrayList<>();
+            currentCombination.add(currentValue);
+            currentCombination.addAll(remain);
 
-        for (List<Long> remain : setNumOfCombinations(currentSum - currentValue, i, values)) {
-          List<Long> currentCombination = new ArrayList<>();
-          currentCombination.add(currentValue);
-          currentCombination.addAll(remain);
-
-          if (currentSum == this.sum) {
-            this.numOfCombinations += 1;
-          } else {
-            result.add(currentCombination);
+            if (currentSum == this.sum) {
+              this.numOfCombinations += 1;
+            } else {
+              result.add(currentCombination);
+            }
           }
         }
       }
+      return result;
     }
-    return result;
-  }
 
-  protected List<List<Long>> getCombinations(long currentSum, int maxIndex, long[] values) {
-    List<List<Long>> result = new ArrayList<>();
-    if (currentSum == 0) {
-      result.add(new ArrayList<>());
-    } else {
-      for (int i = maxIndex; i >= 0; i--) {
-        long currentValue = values[i];
-        if (currentValue > currentSum) {
-          continue;
-        }
+    protected List<List<Long>> getCombinations ( long currentSum, int maxIndex, long[] values){
+      List<List<Long>> result = new ArrayList<>();
+      if (currentSum == 0) {
+        result.add(new ArrayList<>());
+      } else {
+        for (int i = maxIndex; i >= 0; i--) {
+          long currentValue = values[i];
+          if (currentValue > currentSum) {
+            continue;
+          }
 
-        for (List<Long> remain : getCombinations(currentSum - currentValue, i, values)) {
-          List<Long> currentCombination = new ArrayList<>();
-          currentCombination.add(currentValue);
-          currentCombination.addAll(remain);
+          for (List<Long> remain : getCombinations(currentSum - currentValue, i, values)) {
+            List<Long> currentCombination = new ArrayList<>();
+            currentCombination.add(currentValue);
+            currentCombination.addAll(remain);
 
-          if (currentSum == this.sum) {
-            printCombination(this.logger, currentCombination);
+            if (currentSum == this.sum) {
+              printCombination(this.logger, currentCombination);
 
-          } else {
-            result.add(currentCombination);
+            } else {
+              result.add(currentCombination);
+            }
           }
         }
       }
+      return result;
     }
-    return result;
+
+    protected void mainLogic (InputStream stream) throws IOException {
+      System.setIn(stream);
+      String input;
+
+      input = readString();
+      parseString(input);
+
+      setNumOfCombinations(sum, values.length - 1, values);
+      printNumber(logger, numOfCombinations);
+      getCombinations(sum, values.length - 1, values);
+    }
+
+    /**
+     * На вход принимается строка, состоящая из целых чисел, все числа разделены пробелом. Первое
+     * число трактуется как сумма, все последующие - как существующие номиналы. Программа выводит
+     * количество комбинаций и сами комбинации.
+     *
+     * @param args .
+     */
+
+    public static void main (String[]args) throws IOException {
+      loggerConfiguration();
+      Task1 task = new Task1();
+      task.mainLogic(System.in);
+    }
   }
-
-
-  protected void mainLogic(InputStream stream) throws IOException {
-    System.setIn(stream);
-    String input;
-
-    input = readString();
-    parseString(input);
-
-    setNumOfCombinations(sum, values.length - 1, values);
-    printNumber(logger, numOfCombinations);
-    getCombinations(sum, values.length - 1, values);
-  }
-
-  /**
-   * На вход принимается строка, состоящая из целых чисел, все числа разделены пробелом. Первое
-   * число трактуется как сумма, все последующие - как существующие номиналы. Программа выводит
-   * количество комбинаций и сами комбинации.
-   *
-   * @param args .
-   */
-
-  public static void main(String[] args) throws IOException {
-
-    Task1 task = new Task1();
-    task.mainLogic(System.in);
-  }
-}
