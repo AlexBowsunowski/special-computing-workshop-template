@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.concurrent.CompletableFuture;
@@ -17,7 +18,11 @@ public class Task5 {
 
   protected HashMap<String, Integer> readFile(String fileName) throws IOException {
     HashMap<String, Integer> hashMap = new HashMap<>();
-    try (Stream<String> stream = Files.lines(Paths.get(fileName))) {
+    Path path = Paths.get(fileName);
+    if (Files.isDirectory(path)) {
+      throw new IOException("file must not be a directory");
+    }
+    try (Stream<String> stream = Files.lines(path)) {
 
       stream.flatMap(line ->
               Stream.of(line.toLowerCase().replaceAll("\\p{Punct}", "")
