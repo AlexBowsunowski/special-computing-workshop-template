@@ -27,8 +27,7 @@ public class Task1 {
 
   private long sum;
   private long[] values;
-  private final java.util.logging.Logger logger =
-      java.util.logging.Logger.getLogger(Task1.class.getName());
+  private final Logger logger = Logger.getLogger(Task1.class.getName());
 
 
   private long numOfCombinations = 0;
