@@ -37,10 +37,10 @@ class Task3Test {
     String outputTest = "output.txt";
     List<String> actual = new ArrayList<>();
     Task3 testclass = new Task3();
-    String test_path = "src/test/";
+    String test_path = "src/test/java/ru/spbu/apcyb/svp/tasks";
     List<String> expected = Files.walk(Paths.get(test_path)).filter(Files::isRegularFile)
         .map(Path::toString).collect(Collectors.toList());
-
+    expected.add("src\\test\\resources\\.stub");
     testclass.main(new String[]{rootTest, outputTest});
 
     try (Scanner scanner = new Scanner(new File(outputTest))) {
