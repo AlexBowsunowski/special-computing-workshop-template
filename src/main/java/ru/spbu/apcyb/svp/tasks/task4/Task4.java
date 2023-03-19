@@ -5,12 +5,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -53,16 +54,15 @@ public class Task4 {
 
   protected void submitTasks(FileWriter fileWriter, BufferedReader inputReader)
       throws ExecutionException, InterruptedException, IOException {
-    Future<Double>[] outBuffer = new Future[this.numOfThreads.get()];
+    List<MyTask> tasks = new ArrayList<>();
     ExecutorService executorService = Executors.newFixedThreadPool(this.numOfThreads.get());
     while (this.numOfThreads.get() != 0) {
 
       for (int i = 0; i < this.numOfThreads.get(); i++) {
-        MyTask myTask = new MyTask(this.buffer[i]);
-        Future<Double> value = executorService.submit(myTask);
-        outBuffer[i] = value;
+        tasks.add(new MyTask(this.buffer[i]));
       }
 
+      Future<Double>[] outBuffer = executorService.invokeAll(tasks).toArray(new Future[0]);
       writeToFile(fileWriter, outBuffer);
       readToBuffer(inputReader);
     }
