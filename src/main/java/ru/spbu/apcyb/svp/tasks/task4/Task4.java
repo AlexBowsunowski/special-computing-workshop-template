@@ -9,6 +9,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -17,12 +19,12 @@ import java.util.logging.Logger;
  */
 public class Task4 {
 
-  private int numOfThreads;
+  private AtomicInteger numOfThreads;
   private int[] buffer;
 
-  Task4(int numOfThreads) {
+  Task4(AtomicInteger numOfThreads) {
     this.numOfThreads = numOfThreads;
-    this.buffer = new int[numOfThreads];
+    this.buffer = new int[numOfThreads.get()];
   }
 
   public int[] getBuffer() {
@@ -37,25 +39,25 @@ public class Task4 {
       count++;
     }
     if (count != 10) {
-      this.numOfThreads = count;
+      this.numOfThreads.set(count);
     }
   }
 
   protected void writeToFile(FileWriter fileWriter, Future<Double>[] outBuffer)
       throws IOException, ExecutionException, InterruptedException {
 
-    for (int i = 0; i < this.numOfThreads; i++) {
+    for (int i = 0; i < this.numOfThreads.get(); i++) {
       fileWriter.write(outBuffer[i].get().toString().concat("\n"));
     }
   }
 
   protected void submitTasks(FileWriter fileWriter, BufferedReader inputReader)
       throws ExecutionException, InterruptedException, IOException {
-    Future<Double>[] outBuffer = new Future[this.numOfThreads];
-    ExecutorService executorService = Executors.newFixedThreadPool(this.numOfThreads);
-    while (this.numOfThreads != 0) {
+    Future<Double>[] outBuffer = new Future[this.numOfThreads.get()];
+    ExecutorService executorService = Executors.newFixedThreadPool(this.numOfThreads.get());
+    while (this.numOfThreads.get() != 0) {
 
-      for (int i = 0; i < this.numOfThreads; i++) {
+      for (int i = 0; i < this.numOfThreads.get(); i++) {
         MyTask myTask = new MyTask(this.buffer[i]);
         Future<Double> value = executorService.submit(myTask);
         outBuffer[i] = value;
@@ -129,7 +131,7 @@ public class Task4 {
 
   public static void main(String[] args)
       throws IOException {
-    Task4 task = new Task4(10);
+    Task4 task = new Task4(new AtomicInteger(10));
     task.mainLogic("src/main/resources/numbers.txt",
         "src/main/resources/numbers_out.txt");
     task.oneThread("src/main/resources/numbers.txt",

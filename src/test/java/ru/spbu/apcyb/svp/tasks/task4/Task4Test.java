@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -22,7 +23,7 @@ class Task4Test {
   @DisplayName("readToBuffer")
   void readToBuffer() throws IOException {
 
-    Task4 testClass = new Task4(10);
+    Task4 testClass = new Task4(new AtomicInteger(10));
 
     try (BufferedReader testReader =
         new BufferedReader(new FileReader("src/test/resources/test1.txt"))) {
@@ -37,7 +38,7 @@ class Task4Test {
   }
 
   void writeForTest() throws IOException {
-    Task4 testclass = new Task4(1);
+    Task4 testclass = new Task4(new AtomicInteger(1));
     ExecutorService testExecutor = Executors.newSingleThreadExecutor();
     Future<Double>[] testInput = new Future[1];
     testInput[0] = testExecutor.submit(new MyTask(0));
@@ -69,7 +70,7 @@ class Task4Test {
   @Test
   @DisplayName("mainLogicTest")
   void mainLogicTest() throws IOException {
-    Task4 testclass = new Task4(10);
+    Task4 testclass = new Task4(new AtomicInteger(10));
     testclass.mainLogic("src/test/resources/maintestinput.txt",
         "src/test/resources/maintestoutput.txt");
 
@@ -94,7 +95,7 @@ class Task4Test {
   @DisplayName("oneThreadtest")
   void oneThreadtest() throws IOException {
 
-    Task4 testclass = new Task4(10);
+    Task4 testclass = new Task4(new AtomicInteger(10));
     testclass.oneThread("src/test/resources/maintestinput.txt",
         "src/test/resources/maintestoutput.txt");
 

@@ -1,6 +1,7 @@
 package ru.spbu.apcyb.svp.tasks.task4;
 
 import java.util.concurrent.Callable;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * класс задания для CompletableFuture. На вход получает число, возвращает тангенс числа.
