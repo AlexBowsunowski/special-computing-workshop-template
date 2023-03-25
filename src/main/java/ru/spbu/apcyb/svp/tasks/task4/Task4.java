@@ -52,19 +52,29 @@ public class Task4 {
     }
   }
 
-  protected void submitTasks(FileWriter fileWriter, BufferedReader inputReader)
-      throws ExecutionException, InterruptedException, IOException {
+  protected void submitTasks(File outFile, File file, Logger logger)
+      throws IOException {
     List<MyTask> tasks = new ArrayList<>();
     ExecutorService executorService = Executors.newFixedThreadPool(this.numOfThreads.get());
-    while (this.numOfThreads.get() != 0) {
-
-      for (int i = 0; i < this.numOfThreads.get(); i++) {
-        tasks.add(new MyTask(this.buffer[i]));
-      }
-
-      Future<Double>[] outBuffer = executorService.invokeAll(tasks).toArray(new Future[0]);
-      writeToFile(fileWriter, outBuffer);
+    try (FileWriter fileWriter = new FileWriter(outFile);
+        BufferedReader inputReader = new BufferedReader(new FileReader(file))) {
       readToBuffer(inputReader);
+      while (this.numOfThreads.get() != 0) {
+
+        for (int i = 0; i < this.numOfThreads.get(); i++) {
+          tasks.add(new MyTask(this.buffer[i]));
+        }
+
+        Future<Double>[] outBuffer = executorService.invokeAll(tasks).toArray(new Future[0]);
+        writeToFile(fileWriter, outBuffer);
+        readToBuffer(inputReader);
+      }
+    } catch (ExecutionException | InterruptedException e) {
+      Thread.currentThread().interrupt();
+      logger.log(Level.SEVERE, "Thread Error");
+    } catch (IOException e) {
+      executorService.shutdown();
+      throw new IOException("problem with input or output file");
     }
     executorService.shutdown();
   }
@@ -100,24 +110,13 @@ public class Task4 {
     Logger logger = Logger.getLogger(Task4.class.getName());
     File file = new File(inDir);
     File outFile = new File(outDir);
-    try (FileWriter fileWriter = new FileWriter(outFile);
-        BufferedReader inputReader = new BufferedReader(new FileReader(file))) {
-      readToBuffer(inputReader);
 
-      long start = System.currentTimeMillis();
-      submitTasks(fileWriter, inputReader);
 
-      long end = System.currentTimeMillis();
-      long multiThread = end - start;
-      logger.log(Level.INFO, "Multi thread: {0}", multiThread);
-
-    } catch (ExecutionException | InterruptedException e) {
-      Thread.currentThread().interrupt();
-      logger.log(Level.SEVERE, "Thread Error");
-    } catch (IOException e) {
-      throw new IOException("problem with input or output file");
-    }
-
+    long start = System.currentTimeMillis();
+    submitTasks(outFile, file, logger);
+    long end = System.currentTimeMillis();
+    long multiThread = end - start;
+    logger.log(Level.INFO, "Multi thread: {0}", multiThread);
 
   }
 
